@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="th" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VS Portfolio Studio - Classic Balance Edition</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            vscode: {
+              bg: '#1e1e1e',
+              sidebar: '#252526',
+              editor: '#1e1e1e',
+              activity: '#333333',
+              border: '#3c3c3c',
+              tabActive: '#1e1e1e',
+              tabInactive: '#2d2d2d',
+              accent: '#007acc',
+              neonCyan: '#00f3ff',
+              neonPurple: '#b026ff',
+              neonPink: '#ff007f',
+              neonGreen: '#39ff14'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Fira+Code:wght@400;600&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=K2D:wght@300;400;500;600;700&family=Kanit:wght@300;400;500;600;700&family=Mitr:wght@300;400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #1e1e1e;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #424242;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #4f4f4f;
+    }
+    
+    /* Perfect 1-Page A4 Print Styles */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 0;
+      }
+      html, body {
+        width: 210mm !important;
+        height: 297mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: transparent !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        overflow: hidden !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      body * {
+        visibility: hidden;
+      }
+      #preview-pane, #preview-pane * {
+        visibility: visible;
+      }
+      #preview-pane {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 210mm !important;
+        height: 297mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: transparent !important;
+        overflow: hidden !important;
+      }
+      #preview-wrapper {
+        width: 210mm !important;
+        max-width: 210mm !important;
+        height: 297mm !important;
+        padding: 6mm !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+      }
+      #portfolio-render {
+        width: 100% !important;
+        height: 100% !important;
+        max-height: 285mm !important;
+        box-sizing: border-box !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        overflow: hidden !important;
+        page-break-inside: avoid !important;
+        page-break-after: avoid !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-vscode-bg text-gray-200 font-kanit min-h-screen flex flex-col overflow-x-hidden selection:bg-vscode-neonCyan selection:text-black">
+
+  <header class="bg-vscode-sidebar border-b border-vscode-border flex items-center justify-between px-4 py-2 select-none no-print">
+    <div class="flex items-center space-x-3">
+      <div class="flex space-x-1.5">
+        <span class="w-3 h-3 rounded-full bg-red-500 inline-block"></span>
+        <span class="w-3 h-3 rounded-full bg-yellow-500 inline-block"></span>
+        <span class="w-3 h-3 rounded-full bg-green-500 inline-block"></span>
+      </div>
+      <div class="flex items-center space-x-2 pl-3 border-l border-vscode-border">
+        <i class="fa-solid fa-code text-vscode-neonCyan text-lg"></i>
+        <span class="font-semibold text-sm tracking-wide text-gray-100 flex items-center gap-2">
+          VS Portfolio Studio
+          <span class="text-xs px-2 py-0.5 rounded bg-vscode-neonCyan/20 text-vscode-neonCyan border border-vscode-neonCyan/40 font-mono">Classic Balance Edition</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="flex items-center space-x-2 text-xs md:text-sm">
+      <button onclick="loadSampleData()" class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-200 rounded flex items-center gap-1.5 transition border border-gray-600 hover:border-vscode-neonCyan" title="โหลดข้อมูลตัวอย่าง">
+        <i class="fa-solid fa-wand-magic-sparkles text-vscode-neonCyan"></i>
+        <span class="hidden sm:inline">โหลดตัวอย่าง</span>
+      </button>
+
+      <button onclick="exportJSON()" class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-200 rounded flex items-center gap-1.5 transition border border-gray-600 hover:border-vscode-neonPurple" title="บันทึกข้อมูล JSON">
+        <i class="fa-solid fa-download text-vscode-neonPurple"></i>
+        <span class="hidden sm:inline">เซฟ JSON</span>
+      </button>
+
+      <label class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-200 rounded flex items-center gap-1.5 transition border border-gray-600 cursor-pointer hover:border-vscode-neonGreen">
+        <i class="fa-solid fa-upload text-vscode-neonGreen"></i>
+        <span class="hidden sm:inline">โหลด JSON</span>
+        <input type="file" id="jsonInput" onchange="importJSON(event)" accept=".json" class="hidden">
+      </label>
+
+      <button onclick="exportSingleFileHTML()" class="px-3 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded font-medium flex items-center gap-1.5 transition shadow-lg shadow-blue-500/20">
+        <i class="fa-solid fa-file-code"></i>
+        <span class="hidden md:inline">Export HTML</span>
+      </button>
+
+      <button onclick="window.print()" class="px-3 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded font-medium flex items-center gap-1.5 transition shadow-lg shadow-teal-500/20">
+        <i class="fa-solid fa-print"></i>
+        <span class="hidden md:inline">Print / PDF</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Workspace Layout -->
+  <div class="flex-1 flex flex-col md:flex-row overflow-hidden">
+    
+    <!-- LEFT EDITOR PANEL (Form & Settings) -->
+    <section id="editor-pane" class="w-full md:w-1/2 lg:w-5/12 bg-vscode-sidebar border-r border-vscode-border flex flex-col h-[50vh] md:h-auto overflow-y-auto no-print">
+      
+      <div class="flex bg-vscode-activity border-b border-vscode-border text-xs overflow-x-auto sticky top-0 z-20">
+        <button onclick="switchTab('profile')" id="tab-profile" class="tab-btn active px-4 py-2.5 bg-vscode-tabActive text-vscode-neonCyan border-t-2 border-vscode-neonCyan font-mono flex items-center gap-2">
+          <i class="fa-solid fa-user"></i> 1. Profile
+        </button>
+        <button onclick="switchTab('experience')" id="tab-experience" class="tab-btn px-4 py-2.5 text-gray-400 hover:text-gray-200 font-mono flex items-center gap-2 border-t-2 border-transparent">
+          <i class="fa-solid fa-briefcase"></i> 2. Experience & Edu
+        </button>
+        <button onclick="switchTab('skills')" id="tab-skills" class="tab-btn px-4 py-2.5 text-gray-400 hover:text-gray-200 font-mono flex items-center gap-2 border-t-2 border-transparent">
+          <i class="fa-solid fa-code"></i> 3. Skills
+        </button>
+        <button onclick="switchTab('projects')" id="tab-projects" class="tab-btn px-4 py-2.5 text-gray-400 hover:text-gray-200 font-mono flex items-center gap-2 border-t-2 border-transparent">
+          <i class="fa-solid fa-diagram-project"></i> 4. Projects
+        </button>
+        <button onclick="switchTab('theme')" id="tab-theme" class="tab-btn px-4 py-2.5 text-gray-400 hover:text-gray-200 font-mono flex items-center gap-2 border-t-2 border-transparent">
+          <i class="fa-solid fa-palette"></i> 5. Theme (20+ Presets)
+        </button>
+      </div>
+
+      <div class="p-4 space-y-6 flex-1">
+        
+        <!-- SECTION 1: PROFILE & PERSONAL INFO -->
+        <div id="section-profile" class="tab-content space-y-4">
+          <div class="border-b border-vscode-border pb-2 flex justify-between items-center">
+            <h2 class="text-xs font-mono text-vscode-neonCyan uppercase tracking-wider flex items-center gap-2">
+              <i class="fa-solid fa-id-card"></i> ข้อมูลส่วนตัว (Personal Info)
+            </h2>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-mono text-gray-400 mb-1">ชื่อ - นามสกุล (Full Name)</label>
+              <input type="text" id="input-fullname" oninput="updateData()" class="w-full bg-vscode-bg border border-vscode-border rounded p-2 text-sm focus:border-vscode-neonCyan focus:outline-none transition" placeholder="เช่น นายกอไก่ ขยันเรียน">
+            </div>
+            <div>
+              <label class="block text-xs font-mono text-gray-400 mb-1">ตำแหน่ง / สายงาน (Title / Role)</label>
+              <input type="text" id="input-jobtitle" oninput="updateData()" class="w-full bg-vscode-bg border border-vscode-border rounded p-2 text-sm focus:border-vscode-neonCyan focus:outline-none transition" placeholder="เช่น Senior Full-Stack Developer">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-mono text-gray-400 mb-1">สโลแกน / คติประจำใจ (Tagline)</label>
+            <input type="text" id="input-tagline" oninput="updateData()" class="w-full bg-vscode-bg border border-vscode-border rounded p-2 text-sm focus:border-vscode-neonCyan focus:outline-none transition" placeholder="เช่น สร้างสรรค์เว็บแอปพลิเคชันด้วย Passion และความพิถีพิถัน">
+          </div>
+
+          <div>
+            <label class="block text-xs font-mono text-gray-400 mb-1">เกี่ยวกับฉัน (About Me)</label>
+            <textarea id="input-about" oninput="updateData()" rows="3" class="w-full bg-vscode-bg border border-vscode-border rounded p-2 text-sm focus:border-vscode-neonCyan focus:outline-none transition" placeholder="สรุปประวัติและจุดเด่นของคุณ..."></textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-mono text-gray-400 mb-1">รูปโปรไฟล์ (Profile Image)</label>
+            <div class="flex items-center gap-3">
+              <img id="avatar-preview" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80" class="w-12 h-12 rounded-full object-cover border border-vscode-border">
+              <input type="file" id="input-avatar-file" onchange="handleImageUpload(event, 'avatar')" accept="image/*" class="text-xs text-gray-400 file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:bg-vscode-bg file:text-vscode-neonCyan hover:file:bg-gray-800 cursor-pointer">
+            </div>
+            
+            <div class="mt-3 space-y-1">
+              <div class="flex justify-between items-center text-[11px] font-mono text-gray-400">
+                <span>ขนาดกรอบรูปโปรไฟล์ (Avatar Size)</span>
+                <span id="avatar-size-label" class="text-vscode-neonCyan">96px</span>
+              </div>
+              <input type="range" id="input-avatar-size" min="60" max="160" step="4" value="96" oninput="updateAvatarSize(this.value)" class="w-full accent-vscode-neonCyan cursor-pointer">
+            </div>
+          </div>
+
+          <div class="border-t border-vscode-border pt-3">
+            <h3 class="text-xs font-mono text-gray-300 mb-2">ช่องทางติดต่อ (Contact & Socials)</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <input type="email" id="input-email" oninput="updateData()" placeholder="Email" class="bg-vscode-bg border border-vscode-border rounded p-2 text-xs focus:border-vscode-neonCyan focus:outline-none">
+              <input type="text" id="input-phone" oninput="updateData()" placeholder="Phone" class="bg-vscode-bg border border-vscode-border rounded p-2 text-xs focus:border-vscode-neonCyan focus:outline-none">
+              <input type="text" id="input-location" oninput="updateData()" placeholder="Location (e.g. Bangkok)" class="bg-vscode-bg border border-vscode-border rounded p-2 text-xs focus:border-vscode-neonCyan focus:outline-none">
+              <input type="url" id="input-github" oninput="updateData()" placeholder="GitHub URL" class="bg-vscode-bg border border-vscode-border rounded p-2 text-xs focus:border-vscode-neonCyan focus:outline-none">
+              <input type="url" id="input-linkedin" oninput="updateData()" placeholder="LinkedIn URL" class="bg-vscode-bg border border-vscode-border rounded p-2 text-xs focus:border-vscode-neonCyan focus:outline-none">
+              <input type="url" id="input-website" oninput="updateData()" placeholder="Website URL" class="bg-vscode-bg border border-vscode-border rounded p-2 text-xs focus:border-vscode-neonCyan focus:outline-none">
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 2: EXPERIENCE & EDUCATION -->
+        <div id="section-experience" class="tab-content hidden space-y-6">
+          <div class="space-y-3">
+            <div class="border-b border-vscode-border pb-2 flex justify-between items-center">
+              <h2 class="text-xs font-mono text-vscode-neonCyan uppercase tracking-wider flex items-center gap-2">
+                <i class="fa-solid fa-briefcase"></i> 1. ประวัติการทำงาน (Work Experience)
+              </h2>
+              <button onclick="addExperienceItem()" class="px-2.5 py-1 bg-vscode-neonCyan/20 text-vscode-neonCyan hover:bg-vscode-neonCyan/30 border border-vscode-neonCyan/40 rounded text-xs transition">
+                + เพิ่มการทำงาน
+              </button>
+            </div>
+            <div id="experience-container" class="space-y-3"></div>
+          </div>
+
+          <div class="space-y-3 pt-3 border-t border-vscode-border">
+            <div class="border-b border-vscode-border pb-2 flex justify-between items-center">
+              <h2 class="text-xs font-mono text-vscode-neonGreen uppercase tracking-wider flex items-center gap-2">
+                <i class="fa-solid fa-graduation-cap"></i> 2. ประวัติการศึกษา & เกรดเฉลี่ย (Education)
+              </h2>
+              <button onclick="addEducationItem()" class="px-2.5 py-1 bg-vscode-neonGreen/20 text-vscode-neonGreen hover:bg-vscode-neonGreen/30 border border-vscode-neonGreen/40 rounded text-xs transition">
+                + เพิ่มการศึกษา
+              </button>
+            </div>
+            <div id="education-container" class="space-y-3"></div>
+          </div>
+        </div>
+
+        <!-- SECTION 3: SKILLS -->
+        <div id="section-skills" class="tab-content hidden space-y-4">
+          <div class="border-b border-vscode-border pb-2 flex justify-between items-center">
+            <h2 class="text-xs font-mono text-vscode-neonCyan uppercase tracking-wider flex items-center gap-2">
+              <i class="fa-solid fa-list-check"></i> ทักษะ & ความเชี่ยวชาญ (Skills)
+            </h2>
+            <button onclick="addSkillItem()" class="px-2.5 py-1 bg-vscode-neonCyan/20 text-vscode-neonCyan hover:bg-vscode-neonCyan/30 border border-vscode-neonCyan/40 rounded text-xs transition">
+              + เพิ่มทักษะ
+            </button>
+          </div>
+          <div id="skills-container" class="space-y-2"></div>
+        </div>
+
+        <!-- SECTION 4: PROJECTS -->
+        <div id="section-projects" class="tab-content hidden space-y-4">
+          <div class="border-b border-vscode-border pb-2 flex justify-between items-center">
+            <h2 class="text-xs font-mono text-vscode-neonCyan uppercase tracking-wider flex items-center gap-2">
+              <i class="fa-solid fa-rocket"></i> ผลงานโดดเด่น (Projects)
+            </h2>
+            <button onclick="addProjectItem()" class="px-2.5 py-1 bg-vscode-neonCyan/20 text-vscode-neonCyan hover:bg-vscode-neonCyan/30 border border-vscode-neonCyan/40 rounded text-xs transition">
+              + เพิ่มผลงาน
+            </button>
+          </div>
+          <div id="projects-container" class="space-y-3"></div>
+        </div>
+
+        <!-- SECTION 5: THEME & CUSTOMIZATION -->
+        <div id="section-theme" class="tab-content hidden space-y-4">
+          <div class="border-b border-vscode-border pb-2">
+            <h2 class="text-xs font-mono text-vscode-neonCyan uppercase tracking-wider flex items-center gap-2">
+              <i class="fa-solid fa-palette"></i> ธีมสีสำเร็จรูป 20+ แบบ (Theme Presets)
+            </h2>
+          </div>
+
+          <div>
+            <label class="block text-xs font-mono text-gray-400 mb-2">เลือกธีมสำเร็จรูป (คลิกเพื่อเปลี่ยนทันที)</label>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-64 overflow-y-auto pr-1">
+              <button onclick="setThemePreset('cyberpunk')" class="p-2 border border-vscode-border rounded text-left hover:border-cyan-400 transition bg-slate-900 group">
+                <span class="text-[11px] font-bold text-cyan-400 block">1. Cyberpunk Dark</span>
+                <span class="text-[9px] text-gray-400">เข้ม ไฟนีออน Cyan</span>
+              </button>
+              <button onclick="setThemePreset('modernLight')" class="p-2 border border-vscode-border rounded text-left hover:border-blue-500 transition bg-gray-100 text-gray-800 group">
+                <span class="text-[11px] font-bold text-blue-600 block">2. Clean Modern Light</span>
+                <span class="text-[9px] text-gray-600">สว่าง สะอาด อ่านง่าย</span>
+              </button>
+              <button onclick="setThemePreset('minimalSlate')" class="p-2 border border-vscode-border rounded text-left hover:border-emerald-400 transition bg-slate-800 group">
+                <span class="text-[11px] font-bold text-emerald-400 block">3. Minimalist Slate</span>
+                <span class="text-[9px] text-gray-400">เทาเข้ม เรียบหรู</span>
+              </button>
+              <button onclick="setThemePreset('gradientPurple')" class="p-2 border border-vscode-border rounded text-left hover:border-purple-400 transition bg-purple-950 group">
+                <span class="text-[11px] font-bold text-purple-400 block">4. Gradient Purple</span>
+                <span class="text-[9px] text-gray-300">ม่วงสไลด์ Designer</span>
+              </button>
+              <button onclick="setThemePreset('emeraldForest')" class="p-2 border border-vscode-border rounded text-left hover:border-emerald-500 transition bg-emerald-950 group">
+                <span class="text-[11px] font-bold text-emerald-400 block">5. Emerald Forest</span>
+                <span class="text-[9px] text-gray-300">เขียวป่ามรกต ธรรมชาติ</span>
+              </button>
+              <button onclick="setThemePreset('sunsetVibes')" class="p-2 border border-vscode-border rounded text-left hover:border-orange-400 transition bg-rose-950 group">
+                <span class="text-[11px] font-bold text-orange-400 block">6. Sunset Vibes</span>
+                <span class="text-[9px] text-gray-300">ส้มแดงยามเย็น อบอุ่น</span>
+              </button>
+              <button onclick="setThemePreset('royalGold')" class="p-2 border border-vscode-border rounded text-left hover:border-yellow-400 transition bg-zinc-950 group">
+                <span class="text-[11px] font-bold text-yellow-400 block">7. Royal Gold</span>
+                <span class="text-[9px] text-gray-300">ดำสนิท ตัดทองหรูหรา</span>
+              </button>
+              <button onclick="setThemePreset('arcticBlue')" class="p-2 border border-vscode-border rounded text-left hover:border-sky-400 transition bg-sky-950 group">
+                <span class="text-[11px] font-bold text-sky-400 block">8. Arctic Blue</span>
+                <span class="text-[9px] text-gray-300">ฟ้าขั้วโลก เย็นสบาย</span>
+              </button>
+              <button onclick="setThemePreset('crimsonRed')" class="p-2 border border-vscode-border rounded text-left hover:border-red-500 transition bg-red-950 group">
+                <span class="text-[11px] font-bold text-red-400 block">9. Crimson Red</span>
+                <span class="text-[9px] text-gray-300">แดงเพลิง ดุดัน</span>
+              </button>
+              <button onclick="setThemePreset('neonMatrix')" class="p-2 border border-vscode-border rounded text-left hover:border-green-400 transition bg-black group">
+                <span class="text-[11px] font-bold text-green-400 block">10. Neon Matrix</span>
+                <span class="text-[9px] text-gray-400">ดำสนิท เขียว Hacker</span>
+              </button>
+              <button onclick="setThemePreset('cherryBlossom')" class="p-2 border border-vscode-border rounded text-left hover:border-pink-400 transition bg-pink-950 group">
+                <span class="text-[11px] font-bold text-pink-400 block">11. Cherry Blossom</span>
+                <span class="text-[9px] text-gray-300">ชมพูซากุระ ละมุน</span>
+              </button>
+              <button onclick="setThemePreset('coffeeLatte')" class="p-2 border border-vscode-border rounded text-left hover:border-amber-500 transition bg-amber-950 group">
+                <span class="text-[11px] font-bold text-amber-400 block">12. Coffee Latte</span>
+                <span class="text-[9px] text-gray-300">น้ำตาลกาแฟ อบอุ่น</span>
+              </button>
+              <button onclick="setThemePreset('deepSpace')" class="p-2 border border-vscode-border rounded text-left hover:border-indigo-400 transition bg-indigo-950 group">
+                <span class="text-[11px] font-bold text-indigo-400 block">13. Deep Space</span>
+                <span class="text-[9px] text-gray-300">น้ำเงินอวกาศ ลึกล้ำ</span>
+              </button>
+              <button onclick="setThemePreset('neonTeal')" class="p-2 border border-vscode-border rounded text-left hover:border-teal-400 transition bg-teal-950 group">
+                <span class="text-[11px] font-bold text-teal-400 block">14. Neon Teal</span>
+                <span class="text-[9px] text-gray-300">เขียวอมฟ้าสดใส</span>
+              </button>
+              <button onclick="setThemePreset('cyberYellow')" class="p-2 border border-vscode-border rounded text-left hover:border-yellow-300 transition bg-yellow-950 group">
+                <span class="text-[11px] font-bold text-yellow-300 block">15. Cyber Yellow</span>
+                <span class="text-[9px] text-gray-300">เหลืองสะท้อนแสง</span>
+              </button>
+              <button onclick="setThemePreset('pastelMint')" class="p-2 border border-vscode-border rounded text-left hover:border-teal-300 transition bg-stone-900 group">
+                <span class="text-[11px] font-bold text-teal-300 block">16. Pastel Mint</span>
+                <span class="text-[9px] text-gray-400">เขียวมิ้นต์ พาสเทล</span>
+              </button>
+              <button onclick="setThemePreset('vintagePaper')" class="p-2 border border-vscode-border rounded text-left hover:border-orange-300 transition bg-amber-100 text-stone-900 group">
+                <span class="text-[11px] font-bold text-amber-900 block">17. Vintage Paper</span>
+                <span class="text-[9px] text-amber-800">กระดาษวินเทจ คลาสสิก</span>
+              </button>
+              <button onclick="setThemePreset('cyberMagenta')" class="p-2 border border-vscode-border rounded text-left hover:border-fuchsia-400 transition bg-fuchsia-950 group">
+                <span class="text-[11px] font-bold text-fuchsia-400 block">18. Cyber Magenta</span>
+                <span class="text-[9px] text-gray-300">ม่วงแดงมาเจนตา</span>
+              </button>
+              <button onclick="setThemePreset('nordicFrost')" class="p-2 border border-vscode-border rounded text-left hover:border-cyan-200 transition bg-slate-900 group">
+                <span class="text-[11px] font-bold text-cyan-200 block">19. Nordic Frost</span>
+                <span class="text-[9px] text-gray-400">ฟ้าหมอก สไตล์นอร์ดิก</span>
+              </button>
+              <button onclick="setThemePreset('carbonMonochrome')" class="p-2 border border-vscode-border rounded text-left hover:border-gray-300 transition bg-zinc-900 group">
+                <span class="text-[11px] font-bold text-gray-200 block">20. Carbon Mono</span>
+                <span class="text-[9px] text-gray-400">ขาวดำ คาร์บอนโมโน</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Visual Effects -->
+          <div class="border-t border-vscode-border pt-3 space-y-3">
+            <h3 class="text-xs font-mono text-vscode-neonCyan flex items-center gap-2">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> เอฟเฟกต์การแสดงผล (Visual Effects)
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label class="block text-[11px] font-mono text-gray-400 mb-1">สไตล์การ์ด (Card FX)</label>
+                <select id="input-card-style" onchange="updateData()" class="w-full bg-vscode-bg border border-vscode-border rounded p-1.5 text-xs focus:border-vscode-neonCyan focus:outline-none">
+                  <option value="glass">Glassmorphism (กระจกฝ้า)</option>
+                  <option value="solid">Solid Color (สีทึบ)</option>
+                  <option value="outline">Outline Only (กรอบเส้นบาง)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-[11px] font-mono text-gray-400 mb-1">ลวดลายพื้นหลัง (Background)</label>
+                <select id="input-bg-pattern" onchange="updateData()" class="w-full bg-vscode-bg border border-vscode-border rounded p-1.5 text-xs focus:border-vscode-neonCyan focus:outline-none">
+                  <option value="grid">Cyber Grid (เส้นตาราง)</option>
+                  <option value="dots">Dot Matrix (จุดไข่ปลา)</option>
+                  <option value="glow">Ambient Glow (แสงนีออน)</option>
+                  <option value="none">Clean Solid (สีเรียบ)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-[11px] font-mono text-gray-400 mb-1">ความโค้งมน (Corner Radius)</label>
+                <select id="input-border-style" onchange="updateData()" class="w-full bg-vscode-bg border border-vscode-border rounded p-1.5 text-xs focus:border-vscode-neonCyan focus:outline-none">
+                  <option value="rounded">Rounded (โค้งพอดี)</option>
+                  <option value="sharp">Sharp 90° (เหลี่ยมเท่)</option>
+                  <option value="pill">Pill / Curved (โค้งมนพิเศษ)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 border-t border-vscode-border pt-3">
+            <div>
+              <label class="block text-xs font-mono text-gray-400 mb-1">สีหลัก (Primary Color)</label>
+              <input type="color" id="input-primary-color" oninput="updateData()" class="w-full h-8 bg-transparent rounded cursor-pointer">
+            </div>
+            <div>
+              <label class="block text-xs font-mono text-gray-400 mb-1">สีไฮไลท์ (Accent Color)</label>
+              <input type="color" id="input-accent-color" oninput="updateData()" class="w-full h-8 bg-transparent rounded cursor-pointer">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-mono text-gray-400 mb-1">เลือกฟอนต์ (Google Fonts)</label>
+              <select id="input-font-family" onchange="updateData()" class="w-full bg-vscode-bg border border-vscode-border rounded p-2 text-xs focus:border-vscode-neonCyan focus:outline-none">
+                <option value="Kanit, sans-serif">Kanit (โมเดิร์น ยอดนิยม)</option>
+                <option value="Prompt, sans-serif">Prompt (สะอาด ทางการ ทันสมัย)</option>
+                <option value="Sarabun, sans-serif">Sarabun (ทางการ อ่านง่าย)</option>
+                <option value="Inter, sans-serif">Inter (International Standard)</option>
+                <option value="Mitr, sans-serif">Mitr (มิตร - มินิมอล)</option>
+                <option value="Chakra Petch, sans-serif">Chakra Petch (จักรเพชร - ไซเบอร์)</option>
+                <option value="Noto Sans Thai, sans-serif">Noto Sans Thai (มาตรฐานสบายตา)</option>
+                <option value="IBM Plex Sans Thai, sans-serif">IBM Plex Sans Thai (มืออาชีพ)</option>
+                <option value="K2D, sans-serif">K2D (โมเดิร์นเก๋)</option>
+                <option value="Fira Code, monospace">Fira Code (Developer / Code)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-mono text-gray-400 mb-1">ขนาดตัวอักษร (Custom Font Size px, สูงสุด 14px)</label>
+              <div class="flex gap-2">
+                <input type="number" id="input-font-size-px" oninput="updateData()" min="8" max="14" step="0.5" value="12" class="w-full bg-vscode-bg border border-vscode-border rounded p-2 text-xs focus:border-vscode-neonCyan focus:outline-none font-mono" placeholder="เช่น 12">
+                <span class="flex items-center text-xs font-mono text-vscode-neonCyan px-1">px</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- RIGHT PREVIEW PANEL -->
+    <section id="preview-pane" class="w-full md:w-1/2 lg:w-7/12 bg-vscode-editor flex flex-col h-[50vh] md:h-auto overflow-y-auto">
+      
+      <div class="bg-vscode-sidebar border-b border-vscode-border px-4 py-2 flex justify-between items-center sticky top-0 z-20 no-print">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-green-400 animate-pulse"></span>
+          <span class="text-xs font-mono text-gray-300">LIVE PREVIEW (Classic Balance A4 Layout)</span>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="togglePreviewMode('desktop')" class="text-xs px-2 py-1 bg-vscode-bg border border-vscode-border rounded hover:text-vscode-neonCyan">
+            <i class="fa-solid fa-desktop"></i> Desktop
+          </button>
+          <button onclick="togglePreviewMode('mobile')" class="text-xs px-2 py-1 bg-vscode-bg border border-vscode-border rounded hover:text-vscode-neonCyan">
+            <i class="fa-solid fa-mobile-screen"></i> Mobile
+          </button>
+        </div>
+      </div>
+
+      <div id="preview-wrapper" class="p-4 md:p-6 flex-1 transition-all duration-300 mx-auto w-full max-w-4xl">
+        <div id="portfolio-render" class="min-h-full rounded-xl transition-all shadow-2xl">
+          <!-- Rendered Portfolio HTML injected dynamically -->
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div id="export-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4 no-print">
+    <div class="bg-vscode-sidebar border border-vscode-border rounded-xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col max-h-[85vh]">
+      <div class="px-4 py-3 border-b border-vscode-border flex justify-between items-center bg-vscode-activity">
+        <h3 id="modal-title" class="text-xs font-mono font-bold text-vscode-neonCyan flex items-center gap-2">
+          <i class="fa-solid fa-code"></i> ส่งออกข้อมูล (Export Output)
+        </h3>
+        <button onclick="closeExportModal()" class="text-gray-400 hover:text-white text-sm">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="p-4 space-y-3 flex-1 flex flex-col overflow-hidden">
+        <p id="modal-desc" class="text-xs text-gray-300">
+          หากระบบไม่อนุญาตให้ดาวน์โหลดไฟล์โดยอัตโนมัติ คุณสามารถกดปุ่ม "คัดลอกข้อมูล" ด้านล่างไปใช้งานได้ทันที:
+        </p>
+        <textarea id="modal-content" readonly class="w-full flex-1 bg-vscode-bg border border-vscode-border rounded p-3 text-xs font-mono text-gray-300 focus:outline-none resize-none h-60 selection:bg-vscode-neonCyan selection:text-black"></textarea>
+      </div>
+      <div class="px-4 py-3 border-t border-vscode-border bg-vscode-activity flex justify-between items-center">
+        <span id="modal-toast" class="text-xs text-vscode-neonGreen hidden flex items-center gap-1 font-mono">
+          <i class="fa-solid fa-check-circle"></i> คัดลอกข้อมูลเรียบร้อยแล้ว!
+        </span>
+        <div class="flex gap-2 ml-auto">
+          <button onclick="copyModalContent()" class="px-4 py-1.5 bg-vscode-neonCyan/20 hover:bg-vscode-neonCyan/30 text-vscode-neonCyan border border-vscode-neonCyan/40 rounded text-xs font-medium transition flex items-center gap-1.5">
+            <i class="fa-solid fa-copy"></i> คัดลอกข้อมูล (Copy)
+          </button>
+          <button onclick="closeExportModal()" class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded text-xs transition border border-gray-600">
+            ปิด (Close)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let portfolioData = {
+      profile: {
+        fullname: "เลิฟ ยูววว (ยู)",
+        jobtitle: "Senior Full-Stack Developer",
+        tagline: "สร้างสรรค์เว็บแอปพลิเคชันด้วย Passion และความพิถีพิถัน",
+        about: "โปรแกรมเมอร์ผู้หลงใหลการเขียนโค้ดและดีไซน์ UI/UX มีประสบการณ์พัฒนาเว็บมากกว่า 5 ปี เชี่ยวชาญการใช้ Modern JavaScript, React, Node.js และ Cloud Infrastructure ชอบเรียนรู้เทคโนโลยีใหม่ๆ อยู่เสมอ",
+        avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80",
+        avatarSize: 96,
+        email: "somchai.dev@example.com",
+        phone: "081-234-5678",
+        location: "กรุงเทพมหานคร, Thailand",
+        github: "https://github.com",
+        linkedin: "https://linkedin.com",
+        website: "https://myportfolio.dev"
+      },
+      experiences: [
+        {
+          id: 1,
+          role: "Senior Full-Stack Developer",
+          company: "Tech Innovation Co., Ltd.",
+          period: "2022 - ปัจจุบัน",
+          description: "ออกแบบและพัฒนา Web Application ขนาดใหญ่โดยใช้ React, Node.js และ PostgreSQL ปรับปรุง Performance ของระบบให้เร็วขึ้น 40%"
+        },
+        {
+          id: 2,
+          role: "Frontend Developer",
+          company: "Digital Studio Thailand",
+          period: "2020 - 2022",
+          description: "พัฒนา UI/UX สำหรับลูกค้าองค์กร ปรับแต่งเว็บไซต์ให้รองรับ Responsive ทุกอุปกรณ์ด้วย Tailwind CSS"
+        }
+      ],
+      education: [
+        {
+          id: 1,
+          degree: "ปริญญาตรี วิทยาการคอมพิวเตอร์ (B.Sc. Computer Science)",
+          institution: "มหาวิทยาลัยเทคโนโลยีแห่งชาติ",
+          period: "2016 - 2020",
+          gpa: "GPAX: 3.85 (เกียรตินิยมอันดับ 1)",
+          description: "ประธานชมรมพัฒนาซอฟต์แวร์ / ทุนการศึกษาดีเด่น"
+        }
+      ],
+      skills: [
+        { name: "JavaScript / TypeScript", level: 90 },
+        { name: "React.js / Next.js", level: 85 },
+        { name: "Node.js / Express", level: 80 },
+        { name: "Tailwind CSS", level: 95 },
+        { name: "SQL / MongoDB", level: 75 }
+      ],
+      projects: [
+        {
+          id: 1,
+          title: "E-Commerce Cloud Platform",
+          description: "ระบบร้านค้าออนไลน์ครบวงจร รองรับชำระเงิน ตรวจสอบสต็อก และแดชบอร์ดบริหารจัดการ",
+          tags: "React, Node.js, Stripe, Tailwind",
+          image: "https://images.unsplash.com/photo-1557821552-17105176677c?auto=format&fit=crop&w=600&q=80",
+          link: "https://github.com"
+        },
+        {
+          id: 2,
+          title: "AI Smart Task Manager",
+          description: "แอปจัดการงานประจำวัน พร้อมฟีเจอร์ AI ช่วยจัดลำดับความสำคัญของงานอัตโนมัติ",
+          tags: "TypeScript, OpenAI API, Next.js",
+          image: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=600&q=80",
+          link: "https://github.com"
+        }
+      ],
+      theme: {
+        preset: "cyberpunk",
+        cardStyle: "glass",
+        borderStyle: "rounded",
+        bgPattern: "grid",
+        primaryColor: "#0d1117",
+        accentColor: "#00f3ff",
+        fontFamily: "Kanit, sans-serif",
+        fontSizePx: 12
+      }
+    };
+
+    function switchTab(tabName) {
+      const contents = document.querySelectorAll('.tab-content');
+      contents.forEach(el => el.classList.add('hidden'));
+
+      const buttons = document.querySelectorAll('.tab-btn');
+      buttons.forEach(btn => {
+        btn.classList.remove('bg-vscode-tabActive', 'text-vscode-neonCyan', 'border-vscode-neonCyan');
+        btn.classList.add('text-gray-400', 'border-transparent');
+      });
+
+      const targetContent = document.getElementById(`section-${tabName}`);
+      if (targetContent) targetContent.classList.remove('hidden');
+
+      const targetBtn = document.getElementById(`tab-${tabName}`);
+      if (targetBtn) {
+        targetBtn.classList.remove('text-gray-400', 'border-transparent');
+        targetBtn.classList.add('bg-vscode-tabActive', 'text-vscode-neonCyan', 'border-vscode-neonCyan');
+      }
+    }
+
+    function setElValue(id, val) {
+      const el = document.getElementById(id);
+      if (el) el.value = val !== undefined && val !== null ? val : '';
+    }
+
+    function setElSrc(id, src) {
+      const el = document.getElementById(id);
+      if (el) el.src = src || '';
+    }
+
+    function getElValue(id, fallback = '') {
+      const el = document.getElementById(id);
+      return el ? el.value : fallback;
+    }
+
+    window.onload = function() {
+      populateForm();
+      renderPortfolio();
+    };
+
+    function populateForm() {
+      setElValue('input-fullname', portfolioData.profile.fullname);
+      setElValue('input-jobtitle', portfolioData.profile.jobtitle);
+      setElValue('input-tagline', portfolioData.profile.tagline);
+      setElValue('input-about', portfolioData.profile.about);
+      setElSrc('avatar-preview', portfolioData.profile.avatar);
+      
+      const avatarSize = portfolioData.profile.avatarSize || 96;
+      setElValue('input-avatar-size', avatarSize);
+      const sizeLabel = document.getElementById('avatar-size-label');
+      if (sizeLabel) sizeLabel.innerText = `${avatarSize}px`;
+
+      setElValue('input-email', portfolioData.profile.email);
+      setElValue('input-phone', portfolioData.profile.phone);
+      setElValue('input-location', portfolioData.profile.location);
+      setElValue('input-github', portfolioData.profile.github);
+      setElValue('input-linkedin', portfolioData.profile.linkedin);
+      setElValue('input-website', portfolioData.profile.website);
+
+      setElValue('input-primary-color', portfolioData.theme.primaryColor);
+      setElValue('input-accent-color', portfolioData.theme.accentColor);
+      setElValue('input-font-family', portfolioData.theme.fontFamily || 'Kanit, sans-serif');
+      setElValue('input-font-size-px', portfolioData.theme.fontSizePx !== undefined ? portfolioData.theme.fontSizePx : 12);
+      setElValue('input-card-style', portfolioData.theme.cardStyle || 'glass');
+      setElValue('input-border-style', portfolioData.theme.borderStyle || 'rounded');
+      setElValue('input-bg-pattern', portfolioData.theme.bgPattern || 'grid');
+
+      renderExperienceInputs();
+      renderEducationInputs();
+      renderSkillsInputs();
+      renderProjectsInputs();
+    }
+
+    function updateData() {
+      portfolioData.profile.fullname = getElValue('input-fullname', portfolioData.profile.fullname);
+      portfolioData.profile.jobtitle = getElValue('input-jobtitle', portfolioData.profile.jobtitle);
+      portfolioData.profile.tagline = getElValue('input-tagline', portfolioData.profile.tagline);
+      portfolioData.profile.about = getElValue('input-about', portfolioData.profile.about);
+
+      portfolioData.profile.email = getElValue('input-email', portfolioData.profile.email);
+      portfolioData.profile.phone = getElValue('input-phone', portfolioData.profile.phone);
+      portfolioData.profile.location = getElValue('input-location', portfolioData.profile.location);
+      portfolioData.profile.github = getElValue('input-github', portfolioData.profile.github);
+      portfolioData.profile.linkedin = getElValue('input-linkedin', portfolioData.profile.linkedin);
+      portfolioData.profile.website = getElValue('input-website', portfolioData.profile.website);
+
+      portfolioData.theme.primaryColor = getElValue('input-primary-color', portfolioData.theme.primaryColor);
+      portfolioData.theme.accentColor = getElValue('input-accent-color', portfolioData.theme.accentColor);
+      portfolioData.theme.fontFamily = getElValue('input-font-family', portfolioData.theme.fontFamily || 'Kanit, sans-serif');
+      
+      let pxVal = parseFloat(getElValue('input-font-size-px', '12'));
+      if (isNaN(pxVal)) pxVal = 12;
+      if (pxVal > 14) pxVal = 14;
+      if (pxVal < 8) pxVal = 8;
+      portfolioData.theme.fontSizePx = pxVal;
+
+      portfolioData.theme.cardStyle = getElValue('input-card-style', portfolioData.theme.cardStyle || 'glass');
+      portfolioData.theme.borderStyle = getElValue('input-border-style', portfolioData.theme.borderStyle || 'rounded');
+      portfolioData.theme.bgPattern = getElValue('input-bg-pattern', portfolioData.theme.bgPattern || 'grid');
+
+      renderPortfolio();
+    }
+
+    function updateAvatarSize(val) {
+      portfolioData.profile.avatarSize = Number(val);
+      const sizeLabel = document.getElementById('avatar-size-label');
+      if (sizeLabel) sizeLabel.innerText = `${val}px`;
+      renderPortfolio();
+    }
+
+    function handleImageUpload(event, type, index = null) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const base64Img = e.target.result;
+        if (type === 'avatar') {
+          portfolioData.profile.avatar = base64Img;
+          const avatarPreview = document.getElementById('avatar-preview');
+          if (avatarPreview) avatarPreview.src = base64Img;
+        } else if (type === 'project' && index !== null) {
+          portfolioData.projects[index].image = base64Img;
+          renderProjectsInputs();
+        }
+        renderPortfolio();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function renderExperienceInputs() {
+      const container = document.getElementById('experience-container');
+      if (!container) return;
+      container.innerHTML = portfolioData.experiences.map((exp, index) => `
+        <div class="p-3 bg-vscode-bg border border-vscode-border rounded space-y-2 relative">
+          <button onclick="removeExperienceItem(${index})" class="absolute top-2 right-2 text-red-400 hover:text-red-300 text-xs">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+          <input type="text" value="${exp.role}" oninput="portfolioData.experiences[${index}].role=this.value; updateData()" placeholder="ตำแหน่งงาน" class="w-full bg-vscode-sidebar border border-vscode-border rounded p-1.5 text-xs">
+          <input type="text" value="${exp.company}" oninput="portfolioData.experiences[${index}].company=this.value; updateData()" placeholder="บริษัท / องค์กร" class="w-full bg-vscode-sidebar border border-vscode-border rounded p-1.5 text-xs">
+          <input type="text" value="${exp.period}" oninput="portfolioData.experiences[${index}].period=this.value; updateData()" placeholder="ช่วงเวลา เช่น 2022 - ปัจจุบัน" class="w-full bg-vscode-sidebar border border-vscode-border rounded p-1.5 text-xs">
+          <textarea oninput="portfolioData.experiences[${index}].description=this.value; updateData()" placeholder="รายละเอียดหน้าที่ความรับผิดชอบ" class="w-full bg-vscode-sidebar border border-vscode-border rounded p-1.5 text-xs" rows="2">${exp.description}</textarea>
+        </div>
+      `).join('');
+    }
+
+    function addExperienceItem() {
+      portfolioData.experiences.push({ id: Date.now(), role: "ตำแหน่งใหม่", company: "บริษัท / องค์กร", period: "2023 - ปัจจุบัน", description: "รายละเอียดงาน..." });
+      renderExperienceInputs();
+      renderPortfolio();
+    }
+
+    function removeExperienceItem(index) {
+      portfolioData.experiences.splice(index, 1);
+      renderExperienceInputs();
+      renderPortfolio();
+    }
+
+    function renderEducationInputs() {
+      const container = document.getElementById('education-container');
+      if (!container) return;
+      if (!portfolioData.education) portfolioData.education = [];
+      container.innerHTML = portfolioData.education.map((edu, index) => `
+        <div class="p-3 bg-vscode-bg border border-vscode-border rounded space-y-2 relative">
+          <button onclick="removeEducationItem(${index})" class="absolute top-2 right-2 text-red-400 hover:text-red-300 text-xs">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+          <input type="text" value="${edu.degree}" oninput="portfolioData.education[${index}].degree=this.value; updateData()" placeholder="วุฒิการศึกษา / สาขา" class="w-full bg-vscode-sidebar border border-vscode-border rounded p-1.5 text-xs">
+          <input type="text" value="${edu.institution}" oninput="portfolioData.education[${index}].institution=this.value; updateData()" placeholder="ชื่อสถานศึกษา" class="w-full bg-vscode-sidebar border border-vscode-border rounded p-1.5 text-xs">
+          <div class="grid grid-cols-2 gap-2">
+            <input type="text" value="${edu.period}" oninput="portfolioData.education[${index}].period=this.value; updateData()" placeholder="ช่วงเวลา เช่น 2018 - 2022" class="w-full bg-vscode-sidebar border border-vscode-border rounded p-1.5 text-xs">
+            <input type="text" value="${edu.gpa || ''}" oninput="portfolioData.education[${index}].gpa=this.value; updateData()" placeholder="เกรดเฉลี่ย เช่น GPA 3.85" class="w-full bg-vscode-sidebar border border-vscode-border rounded p-1.5 text-xs font-bold text-vscode-neonGreen">
+          </div>
+          <textarea oninput="portfolioData.education[${index}].description=this.value; updateData()" placeholder="เกียรตินิยม / ผลงานวิชาการ / กิจกรรม" class="w-full bg-vscode-sidebar border border-vscode-border rounded p-1.5 text-xs" rows="2">${edu.description || ''}</textarea>
+        </div>
+      `).join('');
+    }
+
+    function addEducationItem() {
+      if (!portfolioData.education) portfolioData.education = [];
+      portfolioData.education.push({ id: Date.now(), degree: "วุฒิการศึกษา", institution: "ชื่อสถานศึกษา", period: "2018 - 2022", gpa: "GPA 3.50", description: "รายละเอียด..." });
+      renderEducationInputs();
+      renderPortfolio();
+    }
+
+    function removeEducationItem(index) {
+      portfolioData.education.splice(index, 1);
+      renderEducationInputs();
+      renderPortfolio();
+    }
+
+    function getSkillLevelText(level) {
+      if (typeof level === 'string' && isNaN(Number(level))) return level;
+      const num = Number(level);
+      if (num >= 90) return 'เชี่ยวชาญมาก';
+      if (num >= 80) return 'ชำนาญมาก';
+      if (num >= 70) return 'ใช้งานได้ดี';
+      if (num >= 50) return 'ระดับปานกลาง';
+      return 'ระดับพื้นฐาน';
+    }
+
+    function renderSkillsInputs() {
+      const container = document.getElementById('skills-container');
+      if (!container) return;
+      container.innerHTML = portfolioData.skills.map((skill, index) => `
+        <div class="flex items-center gap-2 bg-vscode-bg p-2 border border-vscode-border rounded">
+          <input type="text" value="${skill.name}" oninput="portfolioData.skills[${index}].name=this.value; updateData()" placeholder="ชื่อทักษะ" class="flex-1 bg-vscode-sidebar border border-vscode-border rounded p-1.5 text-xs">
+          <select onchange="portfolioData.skills[${index}].level=this.value; updateData()" class="bg-vscode-sidebar border border-vscode-border rounded p-1.5 text-xs text-gray-200 focus:outline-none">
+            <option value="90" ${Number(skill.level) >= 90 ? 'selected' : ''}>เชี่ยวชาญมาก</option>
+            <option value="80" ${Number(skill.level) >= 80 && Number(skill.level) < 90 ? 'selected' : ''}>ชำนาญมาก</option>
+            <option value="70" ${Number(skill.level) >= 70 && Number(skill.level) < 80 ? 'selected' : ''}>ใช้งานได้ดี</option>
+            <option value="50" ${Number(skill.level) >= 50 && Number(skill.level) < 70 ? 'selected' : ''}>ระดับปานกลาง</option>
+            <option value="30" ${Number(skill.level) < 50 ? 'selected' : ''}>ระดับพื้นฐาน</option>
+          </select>
+          <button onclick="removeSkillItem(${index})" class="text-red-400 hover:text-red-300 p-1">
+            <i class="fa-solid fa-trash text-xs"></i>
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function addSkillItem() {
+      portfolioData.skills.push({ name: "ทักษะใหม่", level: 80 });
+      renderSkillsInputs();
+      renderPortfolio();
+    }
+
+    function removeSkillItem(index) {
+      portfolioData.skills.splice(index, 1);
+      renderSkillsInputs();
+      renderPortfolio();
+    }
+
+    function renderProjectsInputs() {
+      const container = document.getElementById('projects-container');
+      if (!container) return;
+      container.innerHTML = portfolioData.projects.map((proj, index) => `
+        <div class="p-3 bg-vscode-bg border border-vscode-border rounded space-y-2 relative">
+          <button onclick="removeProjectItem(${index})" class="absolute top-2 right-2 text-red-400 hover:text-red-300 text-xs">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+          <input type="text" value="${proj.title}" oninput="portfolioData.projects[${index}].title=this.value; updateData()" placeholder="ชื่อผลงาน/โปรเจกต์" class="w-full bg-vscode-sidebar border border-vscode-border rounded p-1.5 text-xs font-bold">
+          <textarea oninput="portfolioData.projects[${index}].description=this.value; updateData()" placeholder="คำอธิบายผลงาน" class="w-full bg-vscode-sidebar border border-vscode-border rounded p-1.5 text-xs" rows="2">${proj.description}</textarea>
+          <input type="text" value="${proj.tags}" oninput="portfolioData.projects[${index}].tags=this.value; updateData()" placeholder="แท็ก/เทคโนโลยี (คั่นด้วยจุลภาค)" class="w-full bg-vscode-sidebar border border-vscode-border rounded p-1.5 text-xs">
+          <input type="url" value="${proj.link}" oninput="portfolioData.projects[${index}].link=this.value; updateData()" placeholder="ลิงก์โปรเจกต์ (URL)" class="w-full bg-vscode-sidebar border border-vscode-border rounded p-1.5 text-xs">
+          <div class="flex items-center gap-2">
+            <img src="${proj.image}" class="w-10 h-10 object-cover rounded border border-vscode-border">
+            <input type="file" onchange="handleImageUpload(event, 'project', ${index})" accept="image/*" class="text-xs text-gray-400 file:py-1 file:px-2 file:rounded file:border-0 file:bg-vscode-sidebar file:text-vscode-neonCyan cursor-pointer">
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function addProjectItem() {
+      portfolioData.projects.push({
+        id: Date.now(),
+        title: "ผลงานใหม่",
+        description: "รายละเอียดผลงานและสเปกของโปรเจกต์",
+        tags: "HTML, CSS, JS",
+        image: "https://images.unsplash.com/photo-1557821552-17105176677c?auto=format&fit=crop&w=600&q=80",
+        link: "#"
+      });
+      renderProjectsInputs();
+      renderPortfolio();
+    }
+
+    function removeProjectItem(index) {
+      portfolioData.projects.splice(index, 1);
+      renderProjectsInputs();
+      renderPortfolio();
+    }
+
+    function setThemePreset(preset) {
+      portfolioData.theme.preset = preset;
+      
+      const themes = {
+        cyberpunk: { primary: '#0d1117', accent: '#00f3ff', card: 'glass', pattern: 'grid' },
+        modernLight: { primary: '#f8fafc', accent: '#2563eb', card: 'solid', pattern: 'none' },
+        minimalSlate: { primary: '#0f172a', accent: '#34d399', card: 'outline', pattern: 'dots' },
+        gradientPurple: { primary: '#1e112a', accent: '#c084fc', card: 'glass', pattern: 'glow' },
+        emeraldForest: { primary: '#022c22', accent: '#34d399', card: 'glass', pattern: 'grid' },
+        sunsetVibes: { primary: '#4c0519', accent: '#fb923c', card: 'glass', pattern: 'glow' },
+        royalGold: { primary: '#09090b', accent: '#facc15', card: 'solid', pattern: 'dots' },
+        arcticBlue: { primary: '#082f49', accent: '#38bdf8', card: 'glass', pattern: 'grid' },
+        crimsonRed: { primary: '#450a0a', accent: '#f87171', card: 'solid', pattern: 'dots' },
+        neonMatrix: { primary: '#000000', accent: '#4ade80', card: 'outline', pattern: 'grid' },
+        cherryBlossom: { primary: '#500724', accent: '#f472b6', card: 'glass', pattern: 'glow' },
+        coffeeLatte: { primary: '#451a03', accent: '#fbbf24', card: 'solid', pattern: 'dots' },
+        deepSpace: { primary: '#020617', accent: '#818cf8', card: 'glass', pattern: 'glow' },
+        neonTeal: { primary: '#042f2e', accent: '#2dd4bf', card: 'glass', pattern: 'grid' },
+        cyberYellow: { primary: '#422006', accent: '#fde047', card: 'solid', pattern: 'grid' },
+        pastelMint: { primary: '#1c1917', accent: '#5eead4', card: 'glass', pattern: 'dots' },
+        vintagePaper: { primary: '#fef3c7', accent: '#78350f', card: 'solid', pattern: 'none' },
+        cyberMagenta: { primary: '#4a044e', accent: '#e879f9', card: 'glass', pattern: 'glow' },
+        nordicFrost: { primary: '#0f172a', accent: '#67e8f9', card: 'outline', pattern: 'grid' },
+        carbonMonochrome: { primary: '#18181b', accent: '#f4f4f5', card: 'solid', pattern: 'dots' }
+      };
+
+      if (themes[preset]) {
+        portfolioData.theme.primaryColor = themes[preset].primary;
+        portfolioData.theme.accentColor = themes[preset].accent;
+        portfolioData.theme.cardStyle = themes[preset].card;
+        portfolioData.theme.bgPattern = themes[preset].pattern;
+      }
+
+      populateForm();
+      renderPortfolio();
+    }
+
+    function togglePreviewMode(mode) {
+      const wrapper = document.getElementById('preview-wrapper');
+      if (mode === 'mobile') {
+        wrapper.classList.remove('w-full', 'max-w-4xl');
+        wrapper.classList.add('max-w-md');
+      } else {
+        wrapper.classList.remove('max-w-md');
+        wrapper.classList.add('w-full', 'max-w-4xl');
+      }
+    }
+
+    function loadSampleData() {
+      portfolioData = {
+        profile: {
+          fullname: "ชัยสิทธิ์ อันเพิก (เบฟ)",
+          jobtitle: "Senior Full-Stack Developer",
+          tagline: "สร้างสรรค์เว็บแอปพลิเคชันด้วย Passion และความพิถีพิถัน",
+          about: "โปรแกรมเมอร์ผู้หลงใหลการเขียนโค้ดและดีไซน์ UI/UX มีประสบการณ์พัฒนาเว็บมากกว่า 5 ปี เชี่ยวชาญการใช้ Modern JavaScript, React, Node.js และ Cloud Infrastructure ชอบเรียนรู้เทคโนโลยีใหม่ๆ อยู่เสมอ",
+          avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80",
+          avatarSize: 96,
+          email: "somchai.dev@example.com",
+          phone: "081-234-5678",
+          location: "กรุงเทพมหานคร, Thailand",
+          github: "https://github.com",
+          linkedin: "https://linkedin.com",
+          website: "https://myportfolio.dev"
+        },
+        experiences: [
+          {
+            id: 1,
+            role: "Senior Full-Stack Developer",
+            company: "Tech Innovation Co., Ltd.",
+            period: "2022 - ปัจจุบัน",
+            description: "ออกแบบและพัฒนา Web Application ขนาดใหญ่โดยใช้ React, Node.js และ PostgreSQL ปรับปรุง Performance ของระบบให้เร็วขึ้น 40%"
+          },
+          {
+            id: 2,
+            role: "Frontend Developer",
+            company: "Digital Studio Thailand",
+            period: "2020 - 2022",
+            description: "พัฒนา UI/UX สำหรับลูกค้าองค์กร ปรับแต่งเว็บไซต์ให้รองรับ Responsive ทุกอุปกรณ์ด้วย Tailwind CSS"
+          }
+        ],
+        education: [
+          {
+            id: 1,
+            degree: "ปริญญาตรี วิทยาการคอมพิวเตอร์ (B.Sc. Computer Science)",
+            institution: "มหาวิทยาลัยเทคโนโลยีแห่งชาติ",
+            period: "2016 - 2020",
+            gpa: "GPAX: 3.85 (เกียรตินิยมอันดับ 1)",
+            description: "ประธานชมรมพัฒนาซอฟต์แวร์ / ทุนการศึกษาดีเด่น"
+          }
+        ],
+        skills: [
+          { name: "JavaScript / TypeScript", level: 90 },
+          { name: "React.js / Next.js", level: 85 },
+          { name: "Node.js / Express", level: 80 },
+          { name: "Tailwind CSS", level: 95 },
+          { name: "SQL / MongoDB", level: 75 }
+        ],
+        projects: [
+          {
+            id: 1,
+            title: "E-Commerce Cloud Platform",
+            description: "ระบบร้านค้าออนไลน์ครบวงจร รองรับชำระเงิน ตรวจสอบสต็อก และแดชบอร์ดบริหารจัดการ",
+            tags: "React, Node.js, Stripe, Tailwind",
+            image: "https://images.unsplash.com/photo-1557821552-17105176677c?auto=format&fit=crop&w=600&q=80",
+            link: "https://github.com"
+          },
+          {
+            id: 2,
+            title: "AI Smart Task Manager",
+            description: "แอปจัดการงานประจำวัน พร้อมฟีเจอร์ AI ช่วยจัดลำดับความสำคัญของงานอัตโนมัติ",
+            tags: "TypeScript, OpenAI API, Next.js",
+            image: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=600&q=80",
+            link: "https://github.com"
+          }
+        ],
+        theme: {
+          preset: "cyberpunk",
+          cardStyle: "glass",
+          borderStyle: "rounded",
+          bgPattern: "grid",
+          primaryColor: "#0d1117",
+          accentColor: "#00f3ff",
+          fontFamily: "Kanit, sans-serif",
+          fontSizePx: 12
+        }
+      };
+      populateForm();
+      renderPortfolio();
+    }
+
+    function showExportModal(title, description, content) {
+      document.getElementById('modal-title').innerHTML = `<i class="fa-solid fa-code"></i> ${title}`;
+      document.getElementById('modal-desc').innerText = description;
+      document.getElementById('modal-content').value = content;
+      document.getElementById('modal-toast').classList.add('hidden');
+      document.getElementById('export-modal').classList.remove('hidden');
+    }
+
+    function closeExportModal() {
+      document.getElementById('export-modal').classList.add('hidden');
+    }
+
+    function copyModalContent() {
+      const textarea = document.getElementById('modal-content');
+      textarea.select();
+      textarea.setSelectionRange(0, 999999);
+      try {
+        document.execCommand('copy');
+        const toast = document.getElementById('modal-toast');
+        toast.classList.remove('hidden');
+        setTimeout(() => {
+          toast.classList.add('hidden');
+        }, 3000);
+      } catch (err) {
+        console.error('Failed to copy', err);
+      }
+    }
+
+    function exportJSON() {
+      const jsonStr = JSON.stringify(portfolioData, null, 2);
+      try {
+        const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", url);
+        downloadAnchor.setAttribute("download", `portfolio-data.json`);
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        setTimeout(() => {
+          downloadAnchor.remove();
+          URL.revokeObjectURL(url);
+        }, 300);
+      } catch (e) {
+        console.error('Download blocked', e);
+      }
+
+      showExportModal(
+        'บันทึกข้อมูล JSON (JSON Export)',
+        'ระบบพยายามดาวน์โหลดไฟล์ให้โดยอัตโนมัติ หากเบราว์เซอร์บล็อกการดาวน์โหลด สามารถกดปุ่ม "คัดลอกข้อมูล" ด้านล่างไปเซฟเป็นไฟล์ portfolio-data.json ได้ทันที:',
+        jsonStr
+      );
+    }
+
+    function importJSON(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          portfolioData = parsed;
+          if (!portfolioData.education) portfolioData.education = [];
+          populateForm();
+          renderPortfolio();
+        } catch (err) {
+          showExportModal('ข้อผิดพลาด (Error)', 'รูปแบบไฟล์ JSON ไม่ถูกต้อง กรุณาตรวจสอบไฟล์อีกครั้ง', err.message);
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function renderPortfolio() {
+      const container = document.getElementById('portfolio-render');
+      if (!container) return;
+      const p = portfolioData.profile;
+      const t = portfolioData.theme;
+
+      const basePx = t.fontSizePx !== undefined ? Number(t.fontSizePx) : 12;
+
+      container.style.fontFamily = t.fontFamily || 'Kanit, sans-serif';
+      container.style.backgroundColor = t.primaryColor;
+      container.style.fontSize = `${basePx}px`;
+
+      const isLight = t.preset === 'modernLight' || t.preset === 'vintagePaper' || t.primaryColor.toUpperCase() === '#FFFFFF' || t.primaryColor.toUpperCase() === '#FEF3C7' || t.primaryColor.toUpperCase() === '#F8FAFC';
+      const textColor = isLight ? 'text-gray-900' : 'text-gray-100';
+      const subTextColor = isLight ? 'text-gray-700' : 'text-gray-300';
+
+      const roundedClass = t.borderStyle === 'sharp' ? 'rounded-none' : t.borderStyle === 'pill' ? 'rounded-2xl' : 'rounded-xl';
+
+      let cardBg = '';
+      if (t.cardStyle === 'solid') {
+        cardBg = isLight ? 'bg-white/90 border-gray-300 shadow-sm' : 'bg-gray-800/90 border-gray-700/80 shadow-md';
+      } else if (t.cardStyle === 'outline') {
+        cardBg = isLight ? 'bg-transparent border-gray-400' : 'bg-transparent border-white/20';
+      } else {
+        cardBg = isLight ? 'bg-white/70 backdrop-blur-md border-gray-200 shadow-sm' : 'bg-white/5 backdrop-blur-md border-white/10 shadow-lg';
+      }
+
+      let bgStyle = `background-color: ${t.primaryColor}; font-family: ${t.fontFamily || 'Kanit, sans-serif'}; font-size: ${basePx}px;`;
+      if (t.bgPattern === 'grid') {
+        const lineHex = isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.04)';
+        bgStyle += ` background-image: linear-gradient(to right, ${lineHex} 1px, transparent 1px), linear-gradient(to bottom, ${lineHex} 1px, transparent 1px); background-size: 24px 24px; background-position: 0 0;`;
+      } else if (t.bgPattern === 'dots') {
+        const dotHex = isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)';
+        bgStyle += ` background-image: radial-gradient(${dotHex} 1px, transparent 1px); background-size: 16px 16px;`;
+      } else if (t.bgPattern === 'glow') {
+        bgStyle += ` background-image: radial-gradient(circle at 50% 20%, ${t.accentColor}25 0%, transparent 60%);`;
+      }
+
+      const educationList = portfolioData.education || [];
+
+      container.className = `min-h-full ${roundedClass} p-4 sm:p-5 space-y-3 shadow-2xl transition-all border border-white/10 relative overflow-hidden`;
+      container.setAttribute('style', bgStyle);
+
+      // Classic Balance Layout Renderer
+      container.innerHTML = `
+        <header class="flex flex-row items-center justify-start gap-3 sm:gap-5 pb-2 border-b border-white/10">
+          <div class="relative group shrink-0">
+            <div class="absolute -inset-1 ${roundedClass} blur opacity-60 transition duration-500" style="background: ${t.accentColor}"></div>
+            <img src="${p.avatar}" style="width: ${p.avatarSize || 96}px; height: ${p.avatarSize || 96}px; border-color: ${t.accentColor}" class="relative ${roundedClass} object-cover border-2 shadow-2xl">
+          </div>
+
+          <div class="space-y-0.5 flex-1 min-w-0">
+            <div class="flex items-center gap-2">
+              <span class="text-[0.75em] font-semibold tracking-wider uppercase px-2 py-0.2 ${roundedClass} border inline-block font-mono" style="color: ${t.accentColor}; border-color: ${t.accentColor}55; background-color: ${t.accentColor}18">
+                <i class="fa-solid fa-circle text-[0.5em] mr-1 animate-pulse" style="color: ${t.accentColor}"></i> Available For Hire
+              </span>
+            </div>
+            
+            <h1 class="text-[1.5em] font-bold tracking-tight truncate ${textColor}">
+              ${p.fullname || 'ชื่อของคุณ'}
+            </h1>
+            
+            <p class="text-[1.1em] font-semibold truncate" style="color: ${t.accentColor}">
+              ${p.jobtitle || 'ตำแหน่งสายงาน'}
+            </p>
+            
+            ${p.tagline ? `<p class="text-[0.85em] ${subTextColor} leading-snug line-clamp-1 opacity-90">${p.tagline}</p>` : ''}
+
+            <div class="flex flex-wrap items-center gap-1 pt-1">
+              ${p.email ? `<a href="mailto:${p.email}" class="text-[0.75em] px-2 py-0.5 ${roundedClass} border border-white/10 ${textColor} hover:opacity-80 transition flex items-center gap-1 ${cardBg}"><i class="fa-solid fa-envelope" style="color: ${t.accentColor}"></i> ${p.email}</a>` : ''}
+              ${p.phone ? `<span class="text-[0.75em] px-2 py-0.5 ${roundedClass} border border-white/10 ${textColor} flex items-center gap-1 ${cardBg}"><i class="fa-solid fa-phone" style="color: ${t.accentColor}"></i> ${p.phone}</span>` : ''}
+              ${p.location ? `<span class="text-[0.75em] px-2 py-0.5 ${roundedClass} border border-white/10 ${textColor} flex items-center gap-1 ${cardBg}"><i class="fa-solid fa-location-dot" style="color: ${t.accentColor}"></i> ${p.location}</span>` : ''}
+              ${p.github ? `<a href="${p.github}" target="_blank" class="text-[0.75em] px-2 py-0.5 ${roundedClass} border border-white/10 ${textColor} hover:opacity-80 transition flex items-center gap-1 ${cardBg}"><i class="fa-brands fa-github"></i> GitHub</a>` : ''}
+              ${p.linkedin ? `<a href="${p.linkedin}" target="_blank" class="text-[0.75em] px-2 py-0.5 ${roundedClass} border border-white/10 ${textColor} hover:opacity-80 transition flex items-center gap-1 ${cardBg}"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>` : ''}
+            </div>
+          </div>
+        </header>
+
+        ${p.about ? `
+        <section class="space-y-1">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-user-astronaut text-[0.9em]" style="color: ${t.accentColor}"></i>
+            <h2 class="text-[0.9em] font-bold tracking-wider uppercase ${textColor}">เกี่ยวกับฉัน (About Me)</h2>
+          </div>
+          <div class="${cardBg} p-2.5 ${roundedClass} border leading-relaxed text-[0.85em] ${subTextColor}">
+            ${p.about}
+          </div>
+        </section>
+        ` : ''}
+
+        <section class="space-y-1">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-code text-[0.9em]" style="color: ${t.accentColor}"></i>
+            <h2 class="text-[0.9em] font-bold tracking-wider uppercase ${textColor}">ทักษะความเชี่ยวชาญ (Skills)</h2>
+          </div>
+          <div class="grid grid-cols-2 gap-1.5">
+            ${portfolioData.skills.map(skill => `
+              <div class="${cardBg} p-2 ${roundedClass} border space-y-0.5">
+                <div class="flex justify-between items-center text-[0.85em] font-semibold ${textColor}">
+                  <span>${skill.name}</span>
+                  <span class="font-mono text-[0.75em] px-1 py-0.2 ${roundedClass}" style="color: ${t.accentColor}; background-color: ${t.accentColor}15">${getSkillLevelText(skill.level)}</span>
+                </div>
+                <div class="w-full h-1 bg-gray-700/30 rounded-full overflow-hidden">
+                  <div class="h-full rounded-full transition-all duration-500" style="width: ${skill.level}%; background-color: ${t.accentColor}"></div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </section>
+
+        <section class="space-y-1">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-briefcase text-[0.9em]" style="color: ${t.accentColor}"></i>
+            <h2 class="text-[0.9em] font-bold tracking-wider uppercase ${textColor}">ประวัติการทำงาน (Work Experience)</h2>
+          </div>
+          <div class="space-y-1.5 relative border-l-2 ml-2 pl-2.5" style="border-color: ${t.accentColor}44">
+            ${portfolioData.experiences.map(exp => `
+              <div class="relative ${cardBg} p-2.5 ${roundedClass} border space-y-0.5">
+                <span class="absolute -left-[15px] top-2.5 w-2 h-2 rounded-full border-2" style="background-color: ${t.primaryColor}; border-color: ${t.accentColor}"></span>
+                <div class="flex flex-wrap justify-between items-center gap-1">
+                  <h3 class="font-bold text-[0.9em] ${textColor}">${exp.role}</h3>
+                  <span class="text-[0.75em] px-1.5 py-0.2 ${roundedClass} font-mono" style="background-color: ${t.accentColor}20; color: ${t.accentColor}">${exp.period}</span>
+                </div>
+                <p class="text-[0.8em] font-semibold" style="color: ${t.accentColor}">${exp.company}</p>
+                <p class="text-[0.8em] ${subTextColor} leading-tight">${exp.description}</p>
+              </div>
+            `).join('')}
+          </div>
+        </section>
+
+        ${educationList.length > 0 ? `
+        <section class="space-y-1">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-graduation-cap text-[0.9em]" style="color: ${t.accentColor}"></i>
+            <h2 class="text-[0.9em] font-bold tracking-wider uppercase ${textColor}">ประวัติการศึกษา (Education & GPA)</h2>
+          </div>
+          <div class="space-y-1.5 relative border-l-2 ml-2 pl-2.5" style="border-color: ${t.accentColor}44">
+            ${educationList.map(edu => `
+              <div class="relative ${cardBg} p-2.5 ${roundedClass} border space-y-0.5">
+                <span class="absolute -left-[15px] top-2.5 w-2 h-2 rounded-full border-2" style="background-color: ${t.primaryColor}; border-color: ${t.accentColor}"></span>
+                <div class="flex flex-wrap justify-between items-center gap-1">
+                  <h3 class="font-bold text-[0.9em] ${textColor}">${edu.degree}</h3>
+                  <div class="flex items-center gap-1.5">
+                    ${edu.gpa ? `<span class="text-[0.75em] px-1.5 py-0.2 ${roundedClass} font-mono font-bold" style="background-color: #10b98120; color: #10b981">${edu.gpa}</span>` : ''}
+                    <span class="text-[0.75em] px-1.5 py-0.2 ${roundedClass} font-mono" style="background-color: ${t.accentColor}20; color: ${t.accentColor}">${edu.period}</span>
+                  </div>
+                </div>
+                <p class="text-[0.8em] font-semibold" style="color: ${t.accentColor}">${edu.institution}</p>
+                ${edu.description ? `<p class="text-[0.8em] ${subTextColor} leading-tight">${edu.description}</p>` : ''}
+              </div>
+            `).join('')}
+          </div>
+        </section>
+        ` : ''}
+
+        <section class="space-y-1">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-rocket text-[0.9em]" style="color: ${t.accentColor}"></i>
+            <h2 class="text-[0.9em] font-bold tracking-wider uppercase ${textColor}">ผลงานโดดเด่น (Projects)</h2>
+          </div>
+          <div class="grid grid-cols-2 gap-1.5">
+            ${portfolioData.projects.map(proj => `
+              <div class="${cardBg} ${roundedClass} overflow-hidden border flex flex-col group">
+                <div class="h-14 overflow-hidden relative shrink-0">
+                  <img src="${proj.image}" class="w-full h-full object-cover transition duration-300 group-hover:scale-105">
+                </div>
+                <div class="p-2 flex-1 flex flex-col justify-between space-y-0.5">
+                  <div>
+                    <h3 class="font-bold text-[0.85em] ${textColor}">${proj.title}</h3>
+                    <p class="text-[0.75em] ${subTextColor} line-clamp-2 leading-tight">${proj.description}</p>
+                  </div>
+                  <div class="pt-0.5 border-t border-white/5 flex justify-between items-center text-[0.7em]">
+                    <span class="font-mono opacity-70 ${textColor} truncate max-w-[70%]">Tech: ${proj.tags}</span>
+                    ${proj.link ? `<a href="${proj.link}" target="_blank" class="font-semibold hover:underline shrink-0" style="color: ${t.accentColor}">ดูงาน <i class="fa-solid fa-arrow-up-right-from-square text-[0.6em]"></i></a>` : ''}
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </section>
+
+        <footer class="text-center pt-1 border-t border-white/10 text-[0.7em] ${subTextColor} opacity-80">
+          <p>© ${new Date().getFullYear()} ${p.fullname}. Generated with VS Portfolio Studio.</p>
+        </footer>
+      `;
+    }
+
+    function exportSingleFileHTML() {
+      const renderContent = document.getElementById('portfolio-render').innerHTML;
+      const font = portfolioData.theme.fontFamily || 'Kanit, sans-serif';
+      const bg = portfolioData.theme.primaryColor;
+      const fontSizePxVal = portfolioData.theme.fontSizePx !== undefined ? portfolioData.theme.fontSizePx : 12;
+
+      const singleFileHTML = `<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${portfolioData.profile.fullname} - Portfolio</title>
+  <script src="https://cdn.tailwindcss.com"><\/script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Fira+Code:wght@400;600&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=K2D:wght@300;400;500;600;700&family=Kanit:wght@300;400;500;600;700&family=Mitr:wght@300;400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @page { size: A4 portrait; margin: 0; }
+    html, body {
+      width: 210mm;
+      height: 297mm;
+      margin: 0;
+      padding: 0;
+      font-family: ${font};
+      background-color: ${bg};
+      font-size: ${fontSizePxVal}px;
+      overflow: hidden;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    #portfolio-container {
+      width: 210mm;
+      height: 297mm;
+      max-height: 297mm;
+      padding: 6mm;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body class="flex justify-center items-center">
+  <div id="portfolio-container" style="background-color: ${bg}; font-family: ${font}; font-size: ${fontSizePxVal}px;">
+    ${renderContent}
+  </div>
+</body>
+</html>`;
+
+      try {
+        const blob = new Blob([singleFileHTML], { type: 'text/html;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `index.html`;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }, 300);
+      } catch (e) {
+        console.error('Download blocked', e);
+      }
+
+      showExportModal(
+        'ส่งออกไฟล์ HTML (Export HTML)',
+        'ระบบพยายามดาวน์โหลดไฟล์ index.html ให้โดยอัตโนมัติ หากการดาวน์โหลดถูกบล็อก สามารถกดปุ่ม "คัดลอกข้อมูล" ด้านล่างไปสร้างเป็นไฟล์ index.html ได้ทันที:',
+        singleFileHTML
+      );
+    }
+  </script>
+</body>
+</html>
